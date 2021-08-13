@@ -355,7 +355,7 @@ class BaseEmissionsTracker(ABC):
     @suppress(Exception)
     def resume(self):
         """
-        Restarts
+        Resumes previously paused tracking
         """
         logger.info("Restarting tracker")
         self._last_measured_time = self._start_time = time.time()
