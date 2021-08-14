@@ -214,7 +214,6 @@ class BaseEmissionsTracker(ABC):
         self._measure_occurrence: int = 0
         self._cloud = None
         self._previous_emissions = None
-        self.pause_count = 0
 
         if isinstance(self._gpu_ids, str):
             self._gpu_ids = parse_gpu_ids(self._gpu_ids)
@@ -317,16 +316,6 @@ class BaseEmissionsTracker(ABC):
         else:
             self._scheduler.pause()
 
-        if self._save_to_file and os.path.exists(
-            os.path.join(self._output_dir, self._output_file)
-        ):
-            self.pause_count += 1
-            filename, extension = os.path.splitext(self._output_file)
-            new_filename = f"{filename}_{self.pause_count}"
-            self.persistence_objs[0] = FileOutput(
-                os.path.join(self._output_dir, f"{new_filename}{extension}")
-            )
-
         # Run to calculate the power used from last
         # scheduled measurement to shutdown
         self._measure_power()
@@ -349,7 +338,6 @@ class BaseEmissionsTracker(ABC):
         Logs intermediate experiment tracking results.
         :return: CO2 emissions in kgs
         """
-        # check if csv already exists
         return self._stop(destroy=False)
 
     @suppress(Exception)
